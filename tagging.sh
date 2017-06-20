@@ -12,6 +12,8 @@ git checkout $MAJOR.$MINOR-stable
 make -C locale tx-update
 script/sync_templates.sh
 cp "$RELEASEDIR"/VERSION .
+tmp=$(mktmp)
+jq ".version = \"$VERSION\"" package.json > "$tmp" && mv "$tmp" package.json
 extras/changelog
 git add .
 git commit -m "Release $VERSION"
