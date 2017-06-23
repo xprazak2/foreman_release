@@ -57,3 +57,6 @@ git push origin $MAJOR.$MINOR-stable
 git push origin $VERSION
 
 cd $RELEASEDIR
+echo "You have now tagged all repositories! Go ahead and start the pipeline - release_tarballs"
+echo "Once the job is finished, download and sign the tarballs using signing.rb"
+echo http://ci.theforeman.org/view/Release%20pipeline/
