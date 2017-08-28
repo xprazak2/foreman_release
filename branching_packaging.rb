@@ -5,7 +5,7 @@ VERSION = File.read('VERSION').strip
 MAJOR=`cat VERSION | cut -d. -f1`.strip
 MINOR=`cat VERSION | cut -d. -f2`.strip
 NEXT = "#{MAJOR}.#{MINOR.to_i + 1}"
-RELEASER = "#{`git config user.name`} <#{`git config user.email`}>"
+RELEASER = "#{`git config user.name`.strip} \<#{`git config user.email`.strip}\>"
 DATE = Date.parse(Time.now.to_s).strftime('%a %b %d %Y')
 RC_VERSION = nil
 PROJECTS = %w(foreman foreman-proxy foreman-installer foreman-selinux)
@@ -15,7 +15,7 @@ Dir.chdir('foreman-packaging')
 `git remote add upstream git@github.com:theforeman/foreman-packaging.git`
 `git fetch upstream`
 
- ################### RPM
+################### RPM
 # ============-=================== Version branch =====================-============
 `git checkout upstream/rpm/#{MAJOR}.#{MINOR}`
 `git checkout -b rpm/#{MAJOR}.#{MINOR}`
@@ -50,9 +50,15 @@ puts "Manually substitute the GPG key in foreman/foreman.gpg by the one used in 
 PROJECTS.each do |project|
   `sed -i 's/^Version:.*/Version: #{NEXT}.0/g' #{project}/#{project}.spec`
   `sed -i '/%changelog/a \
-* #{DATE} #{RELEASER} - #{NEXT}.0-0.develop
+* #{DATE} #{RELEASER} - #{NEXT}.0-0.develop\\n\
 - Bump version to #{NEXT}-develop' #{project}/#{project}.spec`
+  `git add #{project}/#{project}.spec`
 end
 
-`sed -i 's/tag_suffix.*/tag_suffix = .fm#{MAJOR}_#{MINOR}/g' rel-eng/releasers.conf`
-`sed -i 's/tag_suffix.*/tag_suffix = .fm#{MAJOR}_#{MINOR}/g' rel-eng/tito.props`
+`sed -i 's/fm#{MAJOR}_#{MINOR}/fm#{MAJOR}_#{MINOR.to_i + 1}/g' rel-eng/releasers.conf`
+`sed -i 's/fm#{MAJOR}_#{MINOR}/fm#{MAJOR}_#{MINOR.to_i + 1}/g' rel-eng/tito.props`
+`git add rel-eng/releasers.conf`
+`git add rel-eng/tito.props`
+`git commit -m "Update core projects to #{NEXT}"`
+`git push origin rpm/develop`
+`git push upstream rpm/develop`
