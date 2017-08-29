@@ -62,3 +62,23 @@ end
 `git commit -m "Update core projects to #{NEXT}"`
 `git push origin rpm/develop`
 `git push upstream rpm/develop`
+
+################### DEBS
+# Get changelogs from deb/VERSION-1
+# ============-=================== Develop branch =====================-============
+`git checkout upstream/deb/develop`
+`git pull --rebase upstream deb/develop`
+`git checkout --merge upstream/deb/#{MAJOR}.#{MINOR.to_i - 1} debian/{trusty,jessie,xenial}/*/changelog`
+`git commit -m "Sync #{MAJOR}.#{MINOR.to_i - 1}.x releases into changelogs"`
+`git push origin deb/develop`
+# Branch deb/VERSION
+# ============-=================== Version branch =====================-============
+`git checkout -b deb/#{MAJOR}.#{MINOR}`
+`git push origin deb/#{MAJOR}.#{MINOR}`
+# Update changelog to next version
+# ============-=================== Develop branch =====================-============
+`git checkout -b deb/develop`
+`scripts/changelog.rb -v #{NEXT}.0-1 -m "Bump changelog to #{NEXT}.0 to match VERSION" debian/*/*/changelog`
+`git add .`
+`git commit -m "Bump changelog to #{NEXT}.0 to match VERSION"`
+`git push origin deb/develop`
