@@ -7,7 +7,7 @@ MINOR=`cat VERSION | cut -d. -f2`.strip
 NEXT = "#{MAJOR}.#{MINOR.to_i + 1}"
 RELEASER = "#{`git config user.name`.strip} \<#{`git config user.email`.strip}\>"
 DATE = Date.parse(Time.now.to_s).strftime('%a %b %d %Y')
-RC_VERSION = nil
+RC_VERSION = File.read('RC_VERSION').strip
 PROJECTS = %w(foreman foreman-proxy foreman-installer foreman-selinux)
 
 `git clone git@github.com:dlobatog/foreman-packaging.git`

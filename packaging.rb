@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'pry-byebug'
 require 'net/http'
 require 'uri'
 
@@ -7,7 +6,7 @@ VERSION = File.read('VERSION').strip
 #RC_VERSION = File.read('VERSION').strip if File.read('RC').strip != ''
 MAJOR=`cat VERSION | cut -d. -f1`.strip
 MINOR=`cat VERSION | cut -d. -f2`.strip
-RC_VERSION = nil
+RC_VERSION = File.read('RC_VERSION').strip
 PROJECTS = %w(foreman foreman-proxy foreman-installer foreman-selinux)
 
 `git clone git@github.com:dlobatog/foreman-packaging.git`
@@ -44,6 +43,7 @@ end
 `git commit -m "Release #{VERSION}"`
 # Rather submit PR?
 `git push -f origin rpm/#{MAJOR}.#{MINOR}`
+`git push upstream rpm/#{MAJOR}.#{MINOR}`
 
 ################### DEB
 
@@ -55,6 +55,7 @@ end
 `git commit -m "Core projects: Release #{VERSION}"`
 # Rather submit PR?
 `git push -f origin deb/#{MAJOR}.#{MINOR}`
+`git push upstream deb/#{MAJOR}.#{MINOR}`
 
 ###
 puts "Done with packaging! Make sure the PRs are able to build scratch builds properly, then 'tito tag' your new builds"

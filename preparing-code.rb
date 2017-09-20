@@ -5,6 +5,7 @@ require 'net/http'
 require 'json'
 
 VERSION = File.read('VERSION').strip
+RC_VERSION = File.read('RC_VERSION').strip
 URL = 'http://projects.theforeman.org'
 
 # Check out installer modules
@@ -13,7 +14,7 @@ URL = 'http://projects.theforeman.org'
 # Create new release via API call
 # Create new search by open + release field
 
-@current_release_id = 266
+@current_release_id = 240
 @next_release_id = 276
 
 # Move bugs with Release set to VERSION to NEXT-VERSION with status new
@@ -35,9 +36,11 @@ def modify_target_version!(issue_id, options)
   puts "#{response.code} - #{response.body} - when changing #{issue_id} target version to #{options[:next_release]}"
 end
 
-gather_issues['issues'].each do |issue|
-	puts "#{issue['id']} - #{issue['subject']}"
-  modify_target_version!(issue['id'], :next_release => @next_release_id)
+if !RC_VERSION # Only modify issues if it's a final version
+  gather_issues['issues'].each do |issue|
+    puts "#{issue['id']} - #{issue['subject']}"
+    modify_target_version!(issue['id'], :next_release => @next_release_id)
+  end
 end
 
 # Close the release

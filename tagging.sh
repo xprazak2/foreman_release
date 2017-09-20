@@ -2,6 +2,7 @@ VERSION=`cat VERSION`
 MAJOR=`cat VERSION | cut -d. -f1`
 MINOR=`cat VERSION | cut -d. -f2`
 PATCH=`cat VERSION | cut -d. -f3`
+RC_VERSION=`cat VERSION | cut -d- -f2`
 
 RELEASEDIR=`pwd`
 
@@ -11,9 +12,9 @@ git clone git@github.com:theforeman/foreman.git
 cd foreman
 git checkout $MAJOR.$MINOR-stable
 echo "gem 'rdoc'" > bundler.d/Gemfile.local.rb
-bundle install
 cp config/settings.yaml.example config/settings.yaml
 cp config/database.yml.example config/database.yml
+bundle install
 make -C locale tx-update
 script/sync_templates.sh
 cp "$RELEASEDIR"/VERSION .
