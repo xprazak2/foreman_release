@@ -6,7 +6,7 @@ VERSION = File.read('VERSION').strip
 #RC_VERSION = File.read('VERSION').strip if File.read('RC').strip != ''
 MAJOR=`cat VERSION | cut -d. -f1`.strip
 MINOR=`cat VERSION | cut -d. -f2`.strip
-RC_VERSION = File.read('RC_VERSION').strip
+RC_VERSION=`cat VERSION | cut -d- -f2`.strip
 PROJECTS = %w(foreman foreman-proxy foreman-installer foreman-selinux)
 
 `git clone git@github.com:dlobatog/foreman-packaging.git`

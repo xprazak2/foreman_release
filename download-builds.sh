@@ -4,6 +4,8 @@ MAJOR=`cat VERSION | cut -d. -f1`
 MINOR=`cat VERSION | cut -d. -f2`
 GPGKEY=`cat GPGKEY`
 
+# Write .rpmmacros with GPGKEY provided & path to private key
+
 echo "Starting to download"
 for j in $OSES; do
   echo $j
@@ -22,8 +24,10 @@ for j in $OSES; do
 done;
 
 # Sign all rpms
-rpmsign --addsign *.rpm
+rpmsign --key-id $GPGKEY --addsign *.rpm
 # Upload the signatures
 kkoji import-sig *.rpm
 # Update the RPMs
 ls *.src.rpm | sed 's!\.src\.rpm$!!' | xargs -t -n20 -P2 kkoji write-signed-rpm $(echo $GPGKEY | tr 'A-Z' 'a-z')
+
+echo "Well done. Trigger the release_mash job in Jenkins and you are done"
