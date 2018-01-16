@@ -6,15 +6,21 @@ MAJOR=`cat VERSION | cut -d. -f1`.strip
 MINOR=`cat VERSION | cut -d. -f2`.strip
 OLD_MINOR=(MINOR.to_i - 3).to_s
 
-`git clone git@github.com:dlobatog/foreman-infra.git`
+raise 'No config.yml present, see config.yml.example for an inspiration' unless File.exist?('config.yml')
+config = YAML.load_file('./config.yml')
+
+def github_user(config)
+  config[:github_user] || raise("No :github_user in config.yml")
+end
+
+`git clone git@github.com:#{github_user(config)}/foreman-infra.git`
 Dir.chdir('foreman-infra')
 `git remote add upstream git@github.com:theforeman/foreman-infra.git`
 `git fetch upstream`
 `git pull --rebase upstream master`
-`git checkout -b new-jobs`
+`git checkout -b new-jobs-#{VERSION}`
 
 JOBS = %w(
-puppet/modules/jenkins_job_builder/files/theforeman.org/yaml/jobs/release_plugins_push.yaml
 puppet/modules/jenkins_job_builder/files/theforeman.org/yaml/jobs/packaging_build_deb_dependency.yaml
 puppet/modules/jenkins_job_builder/files/theforeman.org/yaml/jobs/packaging_build_deb_coreproject.yaml
 puppet/modules/jenkins_job_builder/files/theforeman.org/yaml/jobs/release_test.yaml
