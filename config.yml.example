@@ -1,0 +1,3 @@
+---
+:theforeman_user: foreman
+:gpg_homedir: '/home/vagrant/gpg/release'

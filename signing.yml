@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: 'Copy signatures to theforeman.org'
+      copy:
+        src: "{{ playbook_dir }}/{{ item }}-{{ version }}.tar.bz2.sig"
+        dest: /var/www/vhosts/downloads/htdocs/{{ item }}/{{ item }}-{{ version }}.tar.bz2.sig
+      with_items: "{{ projects }}"
+
+    - name: "Change SELinux context for signatures"
+      sefcontext:
+        target: /var/www/vhosts/downloads/htdocs/{{ item }}/{{ item }}-{{ version }}.tar.bz2.sig
+        setype: public_content_t
+        seuser: unconfined_u
+        reload: yes
+      with_items: "{{ projects }}"
